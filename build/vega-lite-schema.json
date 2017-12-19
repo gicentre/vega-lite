@@ -638,6 +638,15 @@
       },
       "type": "object"
     },
+    "BasicType": {
+      "enum": [
+        "quantitative",
+        "ordinal",
+        "temporal",
+        "nominal"
+      ],
+      "type": "string"
+    },
     "BinParams": {
       "additionalProperties": false,
       "description": "Binning properties or boolean flag for determining whether to bin data or not.",
@@ -848,7 +857,7 @@
         },
         "type": {
           "$ref": "#/definitions/Type",
-          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`)."
+          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`).\nIt can also be a geo type (`\"latitude\"`, `\"longitude\"`, and `\"geojson\"`) when applicable."
         }
       },
       "required": [
@@ -900,7 +909,7 @@
         },
         "type": {
           "$ref": "#/definitions/Type",
-          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`)."
+          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`).\nIt can also be a geo type (`\"latitude\"`, `\"longitude\"`, and `\"geojson\"`) when applicable."
         }
       },
       "required": [
@@ -1006,6 +1015,10 @@
           ],
           "type": "string"
         },
+        "geoshape": {
+          "$ref": "#/definitions/MarkConfig",
+          "description": "Geoshape-Specific Config "
+        },
         "invalidValues": {
           "description": "Defines how Vega-Lite should handle invalid values (`null` and `NaN`).\n- If set to `\"filter\"` (default), all data items with null values are filtered.\n- If `null`, all data items are included. In this case, invalid values will be interpreted as zeroes.",
           "enum": [
@@ -1036,6 +1049,10 @@
         "point": {
           "$ref": "#/definitions/MarkConfig",
           "description": "Point-Specific Config "
+        },
+        "projection": {
+          "$ref": "#/definitions/ProjectionConfig",
+          "description": "Projection configuration, which determines default properties for all [projections](projection.html). For a full list of projection configuration options, please see the [corresponding section of the projection documentation](projection.html#config)."
         },
         "range": {
           "$ref": "#/definitions/RangeConfig",
@@ -1286,7 +1303,7 @@
               "$ref": "#/definitions/MarkPropValueDefWithCondition"
             }
           ],
-          "description": "The symbol's shape (only for `point` marks). The supported values are\n`\"circle\"` (default), `\"square\"`, `\"cross\"`, `\"diamond\"`, `\"triangle-up\"`,\nor `\"triangle-down\"`, or else a custom SVG path string.\n__Default value:__ If undefined, the default shape depends on [mark config](config.html#point-config)'s `shape` property."
+          "description": "For `point` marks the supported values are\n`\"circle\"` (default), `\"square\"`, `\"cross\"`, `\"diamond\"`, `\"triangle-up\"`,\nor `\"triangle-down\"`, or else a custom SVG path string.\n__Default value:__ If undefined, the default shape depends on [mark config](config.html#point-config)'s `shape` property.\nFor `geoshape` marks it should be a fielddef of the geojson data"
         },
         "size": {
           "anyOf": [
@@ -1438,7 +1455,7 @@
               "$ref": "#/definitions/MarkPropValueDefWithCondition"
             }
           ],
-          "description": "The symbol's shape (only for `point` marks). The supported values are\n`\"circle\"` (default), `\"square\"`, `\"cross\"`, `\"diamond\"`, `\"triangle-up\"`,\nor `\"triangle-down\"`, or else a custom SVG path string.\n__Default value:__ If undefined, the default shape depends on [mark config](config.html#point-config)'s `shape` property."
+          "description": "For `point` marks the supported values are\n`\"circle\"` (default), `\"square\"`, `\"cross\"`, `\"diamond\"`, `\"triangle-up\"`,\nor `\"triangle-down\"`, or else a custom SVG path string.\n__Default value:__ If undefined, the default shape depends on [mark config](config.html#point-config)'s `shape` property.\nFor `geoshape` marks it should be a fielddef of the geojson data"
         },
         "size": {
           "anyOf": [
@@ -1598,7 +1615,7 @@
         },
         "type": {
           "$ref": "#/definitions/Type",
-          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`)."
+          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`).\nIt can also be a geo type (`\"latitude\"`, `\"longitude\"`, and `\"geojson\"`) when applicable."
         }
       },
       "required": [
@@ -1656,7 +1673,7 @@
         },
         "type": {
           "$ref": "#/definitions/Type",
-          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`)."
+          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`).\nIt can also be a geo type (`\"latitude\"`, `\"longitude\"`, and `\"geojson\"`) when applicable."
         }
       },
       "required": [
@@ -1743,7 +1760,7 @@
         },
         "type": {
           "$ref": "#/definitions/Type",
-          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`)."
+          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`).\nIt can also be a geo type (`\"latitude\"`, `\"longitude\"`, and `\"geojson\"`) when applicable."
         }
       },
       "required": [
@@ -1805,7 +1822,7 @@
         },
         "type": {
           "$ref": "#/definitions/Type",
-          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`)."
+          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`).\nIt can also be a geo type (`\"latitude\"`, `\"longitude\"`, and `\"geojson\"`) when applicable."
         }
       },
       "required": [
@@ -2132,11 +2149,15 @@
         },
         "mark": {
           "$ref": "#/definitions/AnyMark",
-          "description": "A string describing the mark type (one of `\"bar\"`, `\"circle\"`, `\"square\"`, `\"tick\"`, `\"line\"`,\n`\"area\"`, `\"point\"`, `\"rule\"`, and `\"text\"`) or a [mark definition object](mark.html#mark-def)."
+          "description": "A string describing the mark type (one of `\"bar\"`, `\"circle\"`, `\"square\"`, `\"tick\"`, `\"line\"`,\n* `\"area\"`, `\"point\"`, `\"rule\"`, `\"geoshape\"`, and `\"text\"`) or a [mark definition object](mark.html#mark-def)."
         },
         "name": {
           "description": "Name of the visualization for later reference.",
           "type": "string"
+        },
+        "projection": {
+          "$ref": "#/definitions/Projection",
+          "description": "A geo projection"
         },
         "selection": {
           "additionalProperties": {
@@ -2195,11 +2216,15 @@
         },
         "mark": {
           "$ref": "#/definitions/AnyMark",
-          "description": "A string describing the mark type (one of `\"bar\"`, `\"circle\"`, `\"square\"`, `\"tick\"`, `\"line\"`,\n`\"area\"`, `\"point\"`, `\"rule\"`, and `\"text\"`) or a [mark definition object](mark.html#mark-def)."
+          "description": "A string describing the mark type (one of `\"bar\"`, `\"circle\"`, `\"square\"`, `\"tick\"`, `\"line\"`,\n* `\"area\"`, `\"point\"`, `\"rule\"`, `\"geoshape\"`, and `\"text\"`) or a [mark definition object](mark.html#mark-def)."
         },
         "name": {
           "description": "Name of the visualization for later reference.",
           "type": "string"
+        },
+        "projection": {
+          "$ref": "#/definitions/Projection",
+          "description": "A geo projection"
         },
         "selection": {
           "additionalProperties": {
@@ -2286,6 +2311,14 @@
         "vconcat"
       ],
       "type": "object"
+    },
+    "GeoType": {
+      "enum": [
+        "latitude",
+        "longitude",
+        "geojson"
+      ],
+      "type": "string"
     },
     "Header": {
       "additionalProperties": false,
@@ -3055,7 +3088,8 @@
         "rect",
         "rule",
         "circle",
-        "square"
+        "square",
+        "geoshape"
       ],
       "type": "string"
     },
@@ -3360,7 +3394,7 @@
         },
         "type": {
           "$ref": "#/definitions/Mark",
-          "description": "The mark type.\nOne of `\"bar\"`, `\"circle\"`, `\"square\"`, `\"tick\"`, `\"line\"`,\n`\"area\"`, `\"point\"`, `\"rule\"`, and `\"text\"`."
+          "description": "The mark type.\nOne of `\"bar\"`, `\"circle\"`, `\"square\"`, `\"tick\"`, `\"line\"`,\n`\"area\"`, `\"point\"`, `\"geoshape\"`, `\"rule\"`, and `\"text\"`."
         }
       },
       "required": [
@@ -3601,7 +3635,7 @@
         },
         "type": {
           "$ref": "#/definitions/Type",
-          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`)."
+          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`).\nIt can also be a geo type (`\"latitude\"`, `\"longitude\"`, and `\"geojson\"`) when applicable."
         }
       },
       "required": [
@@ -3717,13 +3751,125 @@
         },
         "type": {
           "$ref": "#/definitions/Type",
-          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`)."
+          "description": "The encoded field's type of measurement (`\"quantitative\"`, `\"temporal\"`, `\"ordinal\"`, or `\"nominal\"`).\nIt can also be a geo type (`\"latitude\"`, `\"longitude\"`, and `\"geojson\"`) when applicable."
         }
       },
       "required": [
         "type"
       ],
       "type": "object"
+    },
+    "Projection": {
+      "additionalProperties": false,
+      "properties": {
+        "center": {
+          "description": "The center of the projection. The default is `[0, 0]`.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "clipAngle": {
+          "description": "The clip angle of the projection. The default is `null`.",
+          "type": "number"
+        },
+        "clipExtent": {
+          "description": "Sets the projection’s viewport clip extent to the specified bounds in pixels. The default is `null`.",
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "precision": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "The desired precision of the projection. If precision is not specified, returns the projection’s current resampling precision which defaults to √0.5 ≅ 0.70710….",
+          "properties": {
+            "length": {
+              "description": "Returns the length of a String object. ",
+              "type": "number"
+            }
+          },
+          "required": [
+            "length"
+          ],
+          "type": "object"
+        },
+        "rotate": {
+          "description": "The rotation of the projection. The default is `[0, 0, 0]`.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectionType",
+          "description": "The type of the projection. The default is \"mercator\"."
+        }
+      },
+      "type": "object"
+    },
+    "ProjectionConfig": {
+      "additionalProperties": false,
+      "description": "Any property of Projection can be in config",
+      "properties": {
+        "center": {
+          "description": "The center of the projection. The default is `[0, 0]`.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "clipAngle": {
+          "description": "The clip angle of the projection. The default is `null`.",
+          "type": "number"
+        },
+        "clipExtent": {
+          "description": "Sets the projection’s viewport clip extent to the specified bounds in pixels. The default is `null`.",
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "precision": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "The desired precision of the projection. If precision is not specified, returns the projection’s current resampling precision which defaults to √0.5 ≅ 0.70710….",
+          "properties": {
+            "length": {
+              "description": "Returns the length of a String object. ",
+              "type": "number"
+            }
+          },
+          "required": [
+            "length"
+          ],
+          "type": "object"
+        },
+        "rotate": {
+          "description": "The rotation of the projection. The default is `[0, 0, 0]`.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectionType",
+          "description": "The type of the projection. The default is \"mercator\"."
+        }
+      },
+      "type": "object"
+    },
+    "ProjectionType": {
+      "$ref": "#/definitions/VgProjectionType"
     },
     "RangeConfig": {
       "additionalProperties": {
@@ -4983,7 +5129,7 @@
         },
         "mark": {
           "$ref": "#/definitions/AnyMark",
-          "description": "A string describing the mark type (one of `\"bar\"`, `\"circle\"`, `\"square\"`, `\"tick\"`, `\"line\"`,\n`\"area\"`, `\"point\"`, `\"rule\"`, and `\"text\"`) or a [mark definition object](mark.html#mark-def)."
+          "description": "A string describing the mark type (one of `\"bar\"`, `\"circle\"`, `\"square\"`, `\"tick\"`, `\"line\"`,\n* `\"area\"`, `\"point\"`, `\"rule\"`, `\"geoshape\"`, and `\"text\"`) or a [mark definition object](mark.html#mark-def)."
         },
         "name": {
           "description": "Name of the visualization for later reference.",
@@ -4992,6 +5138,10 @@
         "padding": {
           "$ref": "#/definitions/Padding",
           "description": "The default visualization padding, in pixels, from the edge of the visualization canvas to the data rectangle.  If a number, specifies padding for all sides.\nIf an object, the value should have the format `{\"left\": 5, \"top\": 5, \"right\": 5, \"bottom\": 5}` to specify padding for each side of the visualization.\n\n__Default value__: `5`"
+        },
+        "projection": {
+          "$ref": "#/definitions/Projection",
+          "description": "A geo projection"
         },
         "selection": {
           "additionalProperties": {
@@ -5524,14 +5674,15 @@
       ]
     },
     "Type": {
-      "description": "Constants and utilities for data type  \n Data type based on level of measurement ",
-      "enum": [
-        "quantitative",
-        "ordinal",
-        "temporal",
-        "nominal"
+      "anyOf": [
+        {
+          "$ref": "#/definitions/BasicType"
+        },
+        {
+          "$ref": "#/definitions/GeoType"
+        }
       ],
-      "type": "string"
+      "description": "Constants and utilities for data type  \n Data type based on level of measurement "
     },
     "UrlData": {
       "additionalProperties": false,
@@ -6054,6 +6205,24 @@
         }
       },
       "type": "object"
+    },
+    "VgProjectionType": {
+      "enum": [
+        "albers",
+        "albersUsa",
+        "azimuthalEqualArea",
+        "azimuthalEquidistant",
+        "conicConformal",
+        "conicEqualArea",
+        "conicEquidistant",
+        "equirectangular",
+        "gnomonic",
+        "mercator",
+        "orthographic",
+        "stereographic",
+        "transverseMercator"
+      ],
+      "type": "string"
     },
     "VgRadioBinding": {
       "additionalProperties": false,
