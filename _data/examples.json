@@ -226,6 +226,36 @@
       "title": "Repeat and layer to show different weather measures"
     }
   ],
+  "Geographical (Maps)": [
+    {
+      "name": "geo_choropleth",
+      "title": "Basic Choropleth"
+    },
+    {
+      "name": "geo_circle",
+      "title": "Basic Location Indication"
+    },
+    {
+      "name": "geo_layer",
+      "title": "Basic Layers in Geo Plot"
+    },
+    {
+      "name": "geo_line",
+      "title": "Lines on a Geo Plot"
+    },
+    {
+      "name": "geo_repeat",
+      "title": "Use of Repeat Macro with Geo"
+    },
+    {
+      "name": "geo_text",
+      "title": "Text on a Geo Plot"
+    },
+    {
+      "name": "geo_trellis",
+      "title": "Trellised Choropleths"
+    }
+  ],
   "Interactive": [
     {
       "name": "interactive_brush",

@@ -88,6 +88,8 @@ RangeConfig:
   link: "scale.html#range-config"
 ScaleConfig:
   link: "scale.html#config"
+ProjectionConfig:
+  link: "projection.html#config"
 SelectionConfig:
   link: "selection.html#config"
 StyleConfigIndex:
@@ -171,8 +173,10 @@ StackOffset:
   name: String
   link: "stack.html"
 
-# Scale / Axis / Legend
+# Scale / Axis / Legend / Projection
 ScaleType:
+  name: String
+ProjectionType:
   name: String
 SchemeParams:
   link: "scale.html#scheme-params"
